@@ -15,6 +15,7 @@ class Matrix {
   */
   Matrix operator+(const Matrix& M1);
   Matrix operator-(const Matrix& M1);
+  Matrix operator^(const long long int& power);
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
   T trace();
@@ -141,4 +142,18 @@ T Matrix<T>::trace() {
   T sum = 0;
   for (long long int i = 0; i < this->n_rows; i++) sum += this->arr[i][i];
   return sum;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator^(const long long int& power) {
+  if (this->n_rows != this->n_cols)
+    throw std::invalid_argument("Matrix shape mismatch\n");
+  Matrix<T> matrix_power(this->n_rows, this->n_cols);
+  for (int i = 0; i < power; i++) {
+    if (i == 0)
+      matrix_power = *this;
+    else
+      matrix_power = matrix_power.matmul(*this);
+  }
+  return matrix_power;
 }

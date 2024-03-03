@@ -8,8 +8,7 @@ int main() {
   std::cin >> M1;
   std::cout << "Enter second Matrix\n";
   std::cin >> M2;
-  Matrix<int> M1_transpose = M1.transpose();
-  std::cout << M1_transpose;
-  Matrix<int> M_product = M1.matmul(M2);
+  Matrix<int> M = M1 ^ 2;
+  std::cout << M;
   return 0;
 }
