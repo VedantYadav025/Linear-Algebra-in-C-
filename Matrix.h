@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -18,6 +19,7 @@ class Matrix {
   Matrix operator^(const long long int& power);
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
+  T l2Norm();
   T trace();
   /*
     Scalar Multiplication
@@ -156,4 +158,15 @@ Matrix<T> Matrix<T>::operator^(const long long int& power) {
       matrix_power = matrix_power.matmul(*this);
   }
   return matrix_power;
+}
+
+template <typename T>
+T Matrix<T>::l2Norm() {
+  T sum = 0;
+  for (long long int i = 0; i < this->n_rows; i++) {
+    for (long long int j = 0; j < this->n_cols; j++) {
+      sum += pow(this->arr[i][j], 2);
+    }
+  }
+  return sum;
 }
