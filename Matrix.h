@@ -2,6 +2,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+namespace LinearAlgebra {
 template <typename T>
 class Matrix {
  private:
@@ -170,3 +171,4 @@ T Matrix<T>::l2Norm() {
   }
   return sum;
 }
+}  // namespace LinearAlgebra
