@@ -4,9 +4,8 @@
 #include "Vector.h"
 
 int main() {
-  int n;
-  std::cin >> n;
-  LinearAlgebra::Vector<int> v(n);
+  LinearAlgebra::Vector<int> v(5);
   std::cin >> v;
+  std::cout << v;
   return 0;
 }
