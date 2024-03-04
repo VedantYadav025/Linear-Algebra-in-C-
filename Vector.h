@@ -1,7 +1,7 @@
+#pragma once
 #include <iostream>
 #include <vector>
 
-#include "Matrix.h"
 namespace LinearAlgebra {
 template <typename T>
 class Vector {
@@ -15,13 +15,15 @@ class Vector {
   Vector operator+(const Vector& v2);
   Vector operator-(const Vector& v2);
   template <typename U>
-  friend std::istream& operator>>(std::istream& input,
-                                  const Vector<U>& v) friend std::ostream&
-  operator<<(std::istream& output, const Vector<U>& v)
+  friend std::ostream& operator<<(std::ostream& output, Vector<U>& v);
+  template <typename U>
+  friend std::istream& operator>>(std::istream& input, Vector<U>& v);
 };
 
 template <typename T>
-Vector<T>::Vector(const long long int& n) : std::vector<T> arr(n) {}
+Vector<T>::Vector(const long long int& n) : arr(n) {
+  this->size = n;
+}
 
 template <typename T>
 Vector<T> Vector<T>::dot(const Vector& v2) {
@@ -55,16 +57,16 @@ Vector<T> Vector<T>::operator-(const Vector& v2) {
 }
 
 template <typename T>
-std::istream& operator>>(std::istream& input, const Vector<T>& v) {
-  for (int i = 0; i < v.size; i++) input << v.arr[i];
-  return input;
+std::ostream& operator<<(std::ostream& output, Vector<T>& v) {
+  for (int i = 0; i < v.size; i++) output << v.arr[i] << " ";
+  output << "\n";
+  return output;
 }
 
 template <typename T>
-std::ostream& operator>>(std::istream& input, const Vector<T>& v) {
-  for (int i = 0; i < v.size; i++) output << v.arr[i];
-  output << "\n";
-  return output;
+std::istream& operator>>(std::istream& input, Vector<T>& v) {
+  for (int i = 0; i < v.size; i++) input >> v.arr[i];
+  return input;
 }
 
 }  // namespace LinearAlgebra
