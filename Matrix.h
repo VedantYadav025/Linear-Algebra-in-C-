@@ -171,4 +171,5 @@ T Matrix<T>::l2Norm() {
   }
   return sum;
 }
+
 }  // namespace LinearAlgebra
