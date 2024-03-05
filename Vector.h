@@ -1,6 +1,8 @@
 #pragma once
+#include <cmath>
 #include <iostream>
 #include <vector>
+#include "Matrix.h"
 
 namespace LinearAlgebra {
 template <typename T>
@@ -18,6 +20,8 @@ class Vector {
   friend std::ostream& operator<<(std::ostream& output, Vector<U>& v);
   template <typename U>
   friend std::istream& operator>>(std::istream& input, Vector<U>& v);
+  double l2Norm();
+  template <typename U>
 };
 
 template <typename T>
@@ -68,5 +72,14 @@ std::istream& operator>>(std::istream& input, Vector<T>& v) {
   for (int i = 0; i < v.size; i++) input >> v.arr[i];
   return input;
 }
+
+template <typename T>
+double Vector<T>::l2Norm() {
+  double squared_sum = 0;
+  for (int i = 0; i < this->size; i++)
+    squared_sum += this->arr[i] * this->arr[i];
+  return sqrt(squared_sum);
+}
+
 
 }  // namespace LinearAlgebra

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+
 namespace LinearAlgebra {
 template <typename T>
 class Matrix {
@@ -20,6 +21,7 @@ class Matrix {
   Matrix operator^(const long long int& power);
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
+
   T l2Norm();
   T trace();
   /*
@@ -34,6 +36,10 @@ class Matrix {
   friend std::istream& operator>>(std::istream& input, Matrix<U>& M);
   template <typename U>
   friend std::ostream& operator<<(std::ostream& output, Matrix<U>& M);
+
+  /*
+    Multiplication of a vector and a matrix
+  */
 };
 
 template <typename T>
