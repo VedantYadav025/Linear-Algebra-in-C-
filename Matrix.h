@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 
+
 namespace LinearAlgebra {
 template <typename T>
 class Matrix {
@@ -16,6 +17,8 @@ class Matrix {
   /*
     Matrix Addition, Substraction, Multiplication
   */
+  std::pair<long long int, long long int> getSize();
+  std::vector<std::vector<T>> getArray();
   Matrix operator+(const Matrix& M1);
   Matrix operator-(const Matrix& M1);
   Matrix operator^(const long long int& power);
@@ -41,6 +44,18 @@ class Matrix {
     Multiplication of a vector and a matrix
   */
 };
+
+template <typename T>
+std::pair<long long int, long long int> Matrix<T>::getSize() {
+  std::pair<long long int, long long int> size =
+      std::make_pair(this->n_rows, this->n_cols);
+  return size;
+}
+
+template <typename T>
+std::vector<std::vector<T>> Matrix<T>::getArray() {
+  return this->arr;
+}
 
 template <typename T>
 Matrix<T>::Matrix(long long int rows, long long int cols)

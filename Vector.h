@@ -2,7 +2,6 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include "Matrix.h"
 
 namespace LinearAlgebra {
 template <typename T>
@@ -12,6 +11,9 @@ class Vector {
   std::vector<T> arr;
 
  public:
+  long long int getSize();
+  std::vector<T> getArray();
+  void setArray(const long long int& index, const long long int& value);
   Vector(const long long int& n);
   Vector dot(const Vector& v2);
   Vector operator+(const Vector& v2);
@@ -21,8 +23,24 @@ class Vector {
   template <typename U>
   friend std::istream& operator>>(std::istream& input, Vector<U>& v);
   double l2Norm();
-  template <typename U>
 };
+
+template <typename T>
+long long int Vector<T>::getSize() {
+  return this->size;
+}
+
+template <typename T>
+std::vector<T> Vector<T>::getArray() {
+  return this->arr;
+}
+
+template <typename T>
+void Vector<T>::setArray(const long long int& index,
+                         const long long int& value) {
+  this->arr[index] = value;
+  return;
+}
 
 template <typename T>
 Vector<T>::Vector(const long long int& n) : arr(n) {
@@ -80,6 +98,5 @@ double Vector<T>::l2Norm() {
     squared_sum += this->arr[i] * this->arr[i];
   return sqrt(squared_sum);
 }
-
 
 }  // namespace LinearAlgebra
