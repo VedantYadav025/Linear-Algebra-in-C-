@@ -7,6 +7,8 @@ class Fraction {
   Fraction(const long long int& num, const long long int& den);
   Fraction operator+(const Fraction& f);
   Fraction operator-(const Fraction& f);
+  Fraction operator*(const Fraction& f);
+  Fraction intMul(long long int scalar);
 };
 
 Fraction::Fraction(const long long int& num, const long long int& den) {
@@ -32,6 +34,24 @@ Fraction Fraction::operator-(const Fraction& f) {
   den = den / div;
   Fraction minus(num, den);
   return minus;
+}
+
+Fraction Fraction::operator*(const Fraction& f) {
+  long long int num = this->num_ * f.num_;
+  long long int den = this->den_ * f.den_;
+  num = num / gcd(num, den);
+  den = den / gcd(num, den);
+  Fraction product(num, den);
+  return product;
+}
+
+Fraction Fraction::intMul(long long int scalar) {
+  this->num_ = this->num_ * scalar;
+  long long int div = gcd(this->num_, this->den_);
+  long long int num = this->num_ / div;
+  long long int den = this->den_ / div;
+  Fraction mult(num, den);
+  return mult;
 }
 
 long long int gcd(const long long int& a, const long long int& b) {
