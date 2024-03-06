@@ -24,6 +24,8 @@ class Matrix {
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
   bool isSymmetric();
+  bool isUpperTriangular();
+  bool isLowerTriangular();
 
   T l2Norm();
   T trace();
@@ -195,9 +197,28 @@ bool Matrix<T>::isSymmetric() {
     std::cout << "Only square matrices can be symmetric\n";
     return false;
   }
-  for (int i = 0; i < this->n_rows; i++) {
-    if (this->arr[i][j] != this->arr[j][i]) return false;
+  for (long long int i = 0; i < this->n_rows; i++) {
+    for (long long int j = 0; j < this->n_cols; j++) {
+      if (this->arr[i][j] != this->arr[j][i]) return false;
+    }
   }
   return true;
 }
+
+template <typename T>
+bool Matrix<T>::isUpperTriangular() {
+  for (long long int i = 0; i < this->n_rows; i++) {
+    for (long long int j = 0; j < i; j++) {
+      if (this->arr[i][j] != 0) return false;
+    }
+  }
+  return true;
+}
+
+template <typename T>
+bool Matrix<T>::isLowerTriangular() {
+  Matrix<T> transpose = this->transpose();
+  return transpose.isUpperTriangular();
+}
+
 }  // namespace LinearAlgebra
