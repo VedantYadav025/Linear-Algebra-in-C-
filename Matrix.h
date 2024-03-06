@@ -3,7 +3,6 @@
 #include <utility>
 #include <vector>
 
-
 namespace LinearAlgebra {
 template <typename T>
 class Matrix {
@@ -24,6 +23,7 @@ class Matrix {
   Matrix operator^(const long long int& power);
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
+  bool isSymmetric();
 
   T l2Norm();
   T trace();
@@ -39,10 +39,6 @@ class Matrix {
   friend std::istream& operator>>(std::istream& input, Matrix<U>& M);
   template <typename U>
   friend std::ostream& operator<<(std::ostream& output, Matrix<U>& M);
-
-  /*
-    Multiplication of a vector and a matrix
-  */
 };
 
 template <typename T>
@@ -193,4 +189,15 @@ T Matrix<T>::l2Norm() {
   return sum;
 }
 
+template <typename T>
+bool Matrix<T>::isSymmetric() {
+  if (this->n_rows != this->n_cols) {
+    std::cout << "Only square matrices can be symmetric\n";
+    return false;
+  }
+  for (int i = 0; i < this->n_rows; i++) {
+    if (this->arr[i][j] != this->arr[j][i]) return false;
+  }
+  return true;
+}
 }  // namespace LinearAlgebra
