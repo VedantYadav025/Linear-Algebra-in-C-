@@ -8,7 +8,7 @@ template <typename T>
 class Matrix {
  private:
   long long int n_rows, n_cols;
-  std::vector<std::vector<T>> arr;
+  std::vectojr<std::vector<T>> arr;
 
  public:
   // Constructor (inputs : number of rows, number of columns)
@@ -127,9 +127,8 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T>& M1) {
 
 template <typename T>
 Matrix<T> Matrix<T>::matmul(const Matrix<T>& M1) {
-  if (this->n_cols != M1.n_rows) {
+  if (this->n_cols != M1.n_rows)
     throw std::invalid_argument("Matrix shape mismatch\n");
-  }
   Matrix<T> product(this->n_rows, M1.n_cols);
   for (long long int i = 0; i < product.n_rows; i++) {
     for (long long int j = 0; j < product.n_cols; j++) {
