@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <iostream>
 #include <utility>
@@ -7,25 +9,34 @@ namespace LinearAlgebra {
 template <typename T>
 class Matrix {
  private:
-  long long int n_rows, n_cols;
-  std::vectojr<std::vector<T>> arr;
+  uint64_t rows_, cols_;
+  std::vector<std::vector<T>> arr_;
 
  public:
   // Constructor (inputs : number of rows, number of columns)
-  Matrix(long long int rows, long long int cols);
+  Matrix(uint64_t rows, uint64_t cols);
   /*
     Matrix Addition, Substraction, Multiplication
   */
-  std::pair<long long int, long long int> getSize();
+  std::pair<uint64_t, uint64_t> getSize();
   std::vector<std::vector<T>> getArray();
+  void setArray(const std::vector<std::vector<T>>& arr);
   Matrix operator+(const Matrix& M1);
   Matrix operator-(const Matrix& M1);
-  Matrix operator^(const long long int& power);
+  Matrix operator^(const uint64_t& power);
+  Matrix operator=(const Matrix& M);
   Matrix matmul(const Matrix& M1);
   Matrix transpose();
+  Matrix<float> toFloat();
+  Matrix resize(const uint64_t& new_row, const uint64_t& new_column);
+  Matrix<T> subMatrix(const uint64_t& row_to_be_deleted,
+                      const uint64_t& col_to_be_deleted);
+  T determinantLaplace();
   bool isSymmetric();
   bool isUpperTriangular();
   bool isLowerTriangular();
+  bool isZero();
+  std::pair<Matrix, Matrix> lu();
 
   T l2Norm();
   T trace();
@@ -44,9 +55,14 @@ class Matrix {
 };
 
 template <typename T>
-std::pair<long long int, long long int> Matrix<T>::getSize() {
-  std::pair<long long int, long long int> size =
-      std::make_pair(this->n_rows, this->n_cols);
+void Matrix<T>::setArray(const std::vector<std::vector<T>>& arr) {
+  this->arr_ = arr;
+  return;
+}
+
+template <typename T>
+std::pair<uint64_t, uint64_t> Matrix<T>::getSize() {
+  std::pair<uint64_t, uint64_t> size = std::make_pair(this->rows_, this->cols_);
   return size;
 }
 
@@ -56,17 +72,17 @@ std::vector<std::vector<T>> Matrix<T>::getArray() {
 }
 
 template <typename T>
-Matrix<T>::Matrix(long long int rows, long long int cols)
-    : arr(rows, std::vector<T>(cols)) {
-  n_rows = rows;
-  n_cols = cols;
+Matrix<T>::Matrix(uint64_t rows, uint64_t cols)
+    : arr_(rows, std::vector<T>(cols)) {
+  rows_ = rows;
+  cols_ = cols;
 }
 
 template <typename T>
 std::istream& operator>>(std::istream& input, Matrix<T>& M) {
-  for (long long int i = 0; i < M.n_rows; i++) {
-    for (long long int j = 0; j < M.n_cols; j++) {
-      input >> M.arr[i][j];
+  for (uint64_t i = 0; i < M.rows_; i++) {
+    for (uint64_t j = 0; j < M.cols_; j++) {
+      input >> M.arr_[i][j];
     }
   }
   return input;
@@ -74,9 +90,9 @@ std::istream& operator>>(std::istream& input, Matrix<T>& M) {
 
 template <typename T>
 std::ostream& operator<<(std::ostream& output, Matrix<T>& M) {
-  for (long long int i = 0; i < M.n_rows; i++) {
-    for (long long int j = 0; j < M.n_cols; j++) {
-      output << M.arr[i][j] << " ";
+  for (uint64_t i = 0; i < M.rows_; i++) {
+    for (uint64_t j = 0; j < M.cols_; j++) {
+      output << M.arr_[i][j] << " ";
     }
     std::cout << "\n";
   }
@@ -85,8 +101,8 @@ std::ostream& operator<<(std::ostream& output, Matrix<T>& M) {
 
 template <typename T>
 Matrix<T> operator*(const T& scalar, Matrix<T>& M) {
-  for (long long int i = 0; i < M.n_rows; i++) {
-    for (long long int j = 0; j < M.n_cols; j++) {
+  for (uint64_t i = 0; i < M.rows_; i++) {
+    for (uint64_t j = 0; j < M.cols_; j++) {
       M.arr[i][j] *= scalar;
     }
   }
@@ -95,15 +111,15 @@ Matrix<T> operator*(const T& scalar, Matrix<T>& M) {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T>& M1) {
-  if ((this->n_rows != M1.n_rows) || (this->n_cols != M1.n_cols)) {
+  if ((this->rows_ != M1.rows_) || (this->cols_ != M1.cols_)) {
     throw std::invalid_argument("Matrices must be of same size\n");
   }
-  long long int add_rows = M1.n_rows;
-  long long int add_cols = M1.n_cols;
+  uint64_t add_rows = M1.rows_;
+  uint64_t add_cols = M1.cols_;
   Matrix<T> Addition(add_rows, add_cols);
-  for (long long int i = 0; i < add_rows; i++) {
-    for (long long int j = 0; j < add_cols; j++) {
-      Addition.arr[i][j] = M1.arr[i][j] + this->arr[i][j];
+  for (uint64_t i = 0; i < add_rows; i++) {
+    for (uint64_t j = 0; j < add_cols; j++) {
+      Addition.arr_[i][j] = M1.arr_[i][j] + this->arr_[i][j];
     }
   }
   return Addition;
@@ -111,32 +127,45 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& M1) {
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix<T>& M1) {
-  if ((this->n_rows != M1.n_rows) || (this->n_cols != M1.n_cols)) {
+  if ((this->rows_ != M1.rows_) || (this->cols_ != M1.cols_)) {
     throw std::invalid_argument("Matrices must be of same size\n");
   }
-  long long int subs_rows = M1.n_rows;
-  long long int subs_cols = M1.n_cols;
+  uint64_t subs_rows = M1.rows_;
+  uint64_t subs_cols = M1.cols_;
   Matrix<T> Substraction(subs_rows, subs_cols);
-  for (long long int i = 0; i < subs_rows; i++) {
-    for (long long int j = 0; j < subs_cols; j++) {
-      Substraction.arr[i][j] = this->arr[i][j] - M1.arr[i][j];
+  for (uint64_t i = 0; i < subs_rows; i++) {
+    for (uint64_t j = 0; j < subs_cols; j++) {
+      Substraction.arr_[i][j] = this->arr_[i][j] - M1.arr_[i][j];
     }
   }
   return Substraction;
 }
 
 template <typename T>
+Matrix<T> Matrix<T>::operator=(const Matrix<T>& M) {
+  if (this == &M) return this;
+  M.rows_ = this->rows_;
+  M.cols_ = this->cols_;
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      M.arr_[i][j] = this->arr_[i][j];
+    }
+  }
+  return M;
+}
+
+template <typename T>
 Matrix<T> Matrix<T>::matmul(const Matrix<T>& M1) {
-  if (this->n_cols != M1.n_rows)
+  if (this->cols_ != M1.rows_)
     throw std::invalid_argument("Matrix shape mismatch\n");
-  Matrix<T> product(this->n_rows, M1.n_cols);
-  for (long long int i = 0; i < product.n_rows; i++) {
-    for (long long int j = 0; j < product.n_cols; j++) {
+  Matrix<T> product(this->rows_, M1.cols_);
+  for (uint64_t i = 0; i < product.rows_; i++) {
+    for (uint64_t j = 0; j < product.cols_; j++) {
       T sum = 0;
-      for (int k = 0; k < this->n_cols; k++) {
-        sum += this->arr[i][k] * M1.arr[k][j];
+      for (int k = 0; k < this->cols_; k++) {
+        sum += this->arr_[i][k] * M1.arr_[k][j];
       }
-      product.arr[i][j] = sum;
+      product.arr_[i][j] = sum;
     }
   }
   return product;
@@ -144,12 +173,12 @@ Matrix<T> Matrix<T>::matmul(const Matrix<T>& M1) {
 
 template <typename T>
 Matrix<T> Matrix<T>::transpose() {
-  long long int cols = this->n_rows;
-  long long int rows = this->n_cols;
+  uint64_t cols = this->rows_;
+  uint64_t rows = this->cols_;
   Matrix<T> transpose_matrix(rows, cols);
-  for (long long int i = 0; i < rows; i++) {
-    for (long long int j = 0; j < cols; j++) {
-      transpose_matrix.arr[i][j] = this->arr[j][i];
+  for (uint64_t i = 0; i < rows; i++) {
+    for (uint64_t j = 0; j < cols; j++) {
+      transpose_matrix.arr_[i][j] = this->arr_[j][i];
     }
   }
   return transpose_matrix;
@@ -157,19 +186,19 @@ Matrix<T> Matrix<T>::transpose() {
 
 template <typename T>
 T Matrix<T>::trace() {
-  if (this->n_rows != this->n_cols)
+  if (this->rows_ != this->cols_)
     throw std::invalid_argument(
         "Traces are only defined for square matrices\n");
   T sum = 0;
-  for (long long int i = 0; i < this->n_rows; i++) sum += this->arr[i][i];
+  for (uint64_t i = 0; i < this->rows_; i++) sum += this->arr_[i][i];
   return sum;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator^(const long long int& power) {
-  if (this->n_rows != this->n_cols)
+Matrix<T> Matrix<T>::operator^(const uint64_t& power) {
+  if (this->rows_ != this->cols_)
     throw std::invalid_argument("Matrix shape mismatch\n");
-  Matrix<T> matrix_power(this->n_rows, this->n_cols);
+  Matrix<T> matrix_power(this->rows_, this->cols_);
   for (int i = 0; i < power; i++) {
     if (i == 0)
       matrix_power = *this;
@@ -182,23 +211,23 @@ Matrix<T> Matrix<T>::operator^(const long long int& power) {
 template <typename T>
 T Matrix<T>::l2Norm() {
   T sum = 0;
-  for (long long int i = 0; i < this->n_rows; i++) {
-    for (long long int j = 0; j < this->n_cols; j++) {
-      sum += pow(this->arr[i][j], 2);
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      sum += pow(this->arr_[i][j], 2);
     }
   }
-  return sum;
+  return sqrt(sum);
 }
 
 template <typename T>
 bool Matrix<T>::isSymmetric() {
-  if (this->n_rows != this->n_cols) {
+  if (this->rows_ != this->cols_) {
     std::cout << "Only square matrices can be symmetric\n";
     return false;
   }
-  for (long long int i = 0; i < this->n_rows; i++) {
-    for (long long int j = 0; j < this->n_cols; j++) {
-      if (this->arr[i][j] != this->arr[j][i]) return false;
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      if (this->arr_[i][j] != this->arr_[j][i]) return false;
     }
   }
   return true;
@@ -206,9 +235,9 @@ bool Matrix<T>::isSymmetric() {
 
 template <typename T>
 bool Matrix<T>::isUpperTriangular() {
-  for (long long int i = 0; i < this->n_rows; i++) {
-    for (long long int j = 0; j < i; j++) {
-      if (this->arr[i][j] != 0) return false;
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < i; j++) {
+      if (this->arr_[i][j] != 0) return false;
     }
   }
   return true;
@@ -218,6 +247,61 @@ template <typename T>
 bool Matrix<T>::isLowerTriangular() {
   Matrix<T> transpose = this->transpose();
   return transpose.isUpperTriangular();
+}
+
+template <typename T>
+bool Matrix<T>::isZero() {
+  bool is_zero = true;
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      if (this->arr_[i][j] != 0) {
+        is_zero = false;
+        break;
+      }
+    }
+  }
+  return is_zero;
+}
+
+template <typename T>
+Matrix<float> Matrix<T>::toFloat() {
+  Matrix<float> M_float(this->rows_, this->cols_);
+  std::vector<std::vector<float>> arr_float(this->rows_,
+                                            std::vector<float>(this->cols_));
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      arr_float[i][j] = static_cast<float>(this->arr_[i][j]);
+    }
+  }
+  M_float.setArray(arr_float);
+  return M_float;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::subMatrix(const uint64_t& row_to_be_deleted,
+                               const uint64_t& col_to_be_deleted) {
+  if (row_to_be_deleted > this->rows_ || col_to_be_deleted > this->cols_) {
+    throw std::invalid_argument("Index out of range\n");
+  }
+
+  if (this->rows_ == (T)1 || this->cols_ == (T)1) {
+    throw std::invalid_argument("Size of matrix cannot be reduced further\n");
+  }
+
+  Matrix<T> sub_matrix(this->rows_ - 1, this->cols_ - 1);
+  for (uint64_t i = 0; i < this->rows_ - 1; i++) {
+    for (uint64_t j = 0; j < this->cols_ - 1; j++) {
+      if (i < row_to_be_deleted && j < col_to_be_deleted)
+        sub_matrix.arr_[i][j] = this->arr_[i][j];
+      else if (i > row_to_be_deleted && j < col_to_be_deleted)
+        sub_matrix.arr_[i][j] = this->arr_[i - 1][j];
+      else if (i < row_to_be_deleted && j > col_to_be_deleted)
+        sub_matrix.arr_[i][j] = this->arr_[i][j - 1];
+      else if (i > row_to_be_deleted && j > col_to_be_deleted)
+        sub_matrix.arr_[i][j] = this->arr_[i - 1][j - 1];
+    }
+  }
+  return sub_matrix;
 }
 
 }  // namespace LinearAlgebra
