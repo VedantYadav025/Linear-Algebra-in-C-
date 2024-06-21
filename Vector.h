@@ -5,6 +5,7 @@
 
 namespace LinearAlgebra {
 template <typename T>
+// A vector is just a matrix of the shape (n, 1)
 class Vector {
  private:
   long long int size;
@@ -18,12 +19,15 @@ class Vector {
   Vector dot(const Vector& v2);
   Vector operator+(const Vector& v2);
   Vector operator-(const Vector& v2);
+  Vector cross(const Vector& v2);
   template <typename U>
   friend std::ostream& operator<<(std::ostream& output, Vector<U>& v);
   template <typename U>
   friend std::istream& operator>>(std::istream& input, Vector<U>& v);
   double l2Norm();
 };
+
+
 
 template <typename T>
 long long int Vector<T>::getSize() {
@@ -99,4 +103,9 @@ double Vector<T>::l2Norm() {
   return sqrt(squared_sum);
 }
 
+template <typename T>
+Vector<T> Vector<T>::cross(const Vector<T>& v2) {
+  if ((this->size != v2.size)) throw std::invalid_argument("Vectors must be of the same size\n");
+  else if (this->size > 3) throw std::invalid_argument("Cross product is only defined for vectors of dimmension less then 3\n");
+}
 }  // namespace LinearAlgebra

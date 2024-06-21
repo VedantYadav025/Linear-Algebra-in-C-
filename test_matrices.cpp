@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 #include "Matrix.h"
@@ -8,7 +10,7 @@ int main() {
   std::cin >> M1;
   std::cout << "Enter second Matrix\n";
   std::cin >> M2;
-  LinearAlgebra::Matrix<int> M = M1 ^ 2;
+  LinearAlgebra::Matrix<int> M = M1 + M2;
   std::cout << M;
   return 0;
 }

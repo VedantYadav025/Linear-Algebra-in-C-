@@ -1,4 +1,5 @@
 #include <algorithm>
+
 class Fraction {
  private:
   long long int num_, den_;
@@ -52,17 +53,4 @@ Fraction Fraction::intMul(long long int scalar) {
   long long int den = this->den_ / div;
   Fraction mult(num, den);
   return mult;
-}
-
-long long int gcd(const long long int& a, const long long int& b) {
-  int result = std::min(a, b);
-  while (result > 0) {
-    if (a % result == 0 && b % result == 0) {
-      break;
-    }
-    result--;
-  }
-
-  // Return gcd of a and b
-  return result;
 }
