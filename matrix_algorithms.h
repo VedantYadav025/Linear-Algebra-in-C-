@@ -1,13 +1,15 @@
 #pragma once
 #include "Matrix.h"
 #include "Vector.h"
+#include <string>
+
 
 namespace LinearAlgebra {
 template <typename T>
 Vector<T> vecmul(Matrix<T>& M, Vector<T>& v) {
   std::vector<std::vector<T>> arr_matrix = M.getArray();
   std::vector<T> arr_vector = v.getArray();
-  long long int size = (M.getSize()).first;
+  long long size = (M.getSize()).first;
   Vector<T> product(size);
   for (int i = 0; i < size; i++) {
     T sum = 0;
