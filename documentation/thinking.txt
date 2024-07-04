@@ -1,2 +1,0 @@
-We'll need to make the Matrix class such that it handels two Matrices of different data types.
-Like, we should be able to add a Matrix<int64_t> and Matrix<float64> .
