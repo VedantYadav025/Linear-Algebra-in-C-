@@ -6,6 +6,8 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <sys/types.h>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -31,6 +33,8 @@ public:
   Matrix transpose() const;
   T trace() const;
   double frobNorm() const;
+  // type conversions
+  template <typename P> operator P() const;
 
 private:
   uint64_t rows_, cols_;
@@ -222,4 +226,18 @@ template <typename T> double Matrix<T>::frobNorm() const {
   return norm;
 }
 
+template <typename T> template <typename P> Matrix<T>::operator P() const {
+  if constexpr (std::is_same_v<P, Matrix<int>> ||
+                std::is_same_v<P, Matrix<double>> ||
+                std::is_same_v<P, Matrix<float>>) {
+    Matrix<P> m(this->rows_, this->cols_);
+    for (uint64_t i = 0; i < this->rows_; i++) {
+      for (uint64_t j = 0; j < this->cols_; j++) {
+        m.arr_[i][j] = static_cast<P>(this->arr_[i][j]);
+      }
+    }
+    return m;
+  }
+  throw std::invalid_argument("Not a valid type conversions\n");
+}
 } // namespace LinAlg
