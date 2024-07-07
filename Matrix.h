@@ -13,7 +13,7 @@ namespace LinAlg {
 template <typename T> class Matrix {
 public:
   Matrix();
-  Matrix(uint64_t rows, uint64_t cols);
+  Matrix(const uint64_t &rows, const uint64_t &cols);
   Matrix operator+(const Matrix &M) const;
   Matrix operator-(const Matrix &M) const;
   void operator=(const std::vector<std::vector<T>> &arr);
@@ -41,7 +41,8 @@ private:
 template <typename T> Matrix<T>::Matrix() : rows_(0), cols_(0) { ; }
 
 template <typename T>
-Matrix<T>::Matrix(uint64_t rows, uint64_t cols) : rows_(rows), cols_(cols) {
+Matrix<T>::Matrix(const uint64_t &rows, const uint64_t &cols)
+    : rows_(rows), cols_(cols) {
   for (uint64_t i = 0; i < rows; i++) {
     std::vector<T> arr;
     for (uint64_t j = 0; j < cols; j++) {
