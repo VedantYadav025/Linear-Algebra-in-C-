@@ -83,15 +83,7 @@ void Matrix<T>::operator=(const std::vector<std::vector<T>> &arr) {
 }
 
 template <typename T> bool Matrix<T>::operator==(const Matrix<T> &M) const {
-  if (this->rows_ != M.rows_ || this->cols_ != M.cols_)
-    throw std::invalid_argument("comparing two matrices of different shapes\n");
-  for (uint64_t i = 0; i < this->rows_; i++) {
-    for (uint64_t j = 0; j < this->cols_; j++) {
-      if (this->arr_[i][j] != M.arr_[i][j])
-        return false;
-    }
-  }
-  return true;
+  return (this->arr_ == M.arr_);
 }
 
 template <typename T>
