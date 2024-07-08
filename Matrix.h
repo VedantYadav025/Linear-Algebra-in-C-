@@ -14,8 +14,11 @@
 namespace LinAlg {
 template <typename T> class Matrix {
 public:
+  using element_type = T;
   Matrix();
   Matrix(const uint64_t &rows, const uint64_t &cols);
+  void setArr(const std::vector<std::vector<T>> &arr);
+  std::vector<std::vector<T>> getArr() const;
   Matrix operator+(const Matrix &M) const;
   Matrix operator-(const Matrix &M) const;
   void operator=(const std::vector<std::vector<T>> &arr);
@@ -34,7 +37,7 @@ public:
   T trace() const;
   double frobNorm() const;
   // type conversions
-  template <typename P> operator P() const;
+  template <typename P> operator P();
 
 private:
   uint64_t rows_, cols_;
@@ -54,6 +57,12 @@ Matrix<T>::Matrix(const uint64_t &rows, const uint64_t &cols)
     }
     this->arr_.push_back(arr);
   }
+}
+
+template <typename T>
+void Matrix<T>::setArr(const std::vector<std::vector<T>> &arr) {
+  this->arr_ = arr;
+  return;
 }
 
 template <typename T> Matrix<T> Matrix<T>::operator+(const Matrix &M) const {
@@ -226,18 +235,21 @@ template <typename T> double Matrix<T>::frobNorm() const {
   return norm;
 }
 
-template <typename T> template <typename P> Matrix<T>::operator P() const {
-  if constexpr (std::is_same_v<P, Matrix<int>> ||
-                std::is_same_v<P, Matrix<double>> ||
-                std::is_same_v<P, Matrix<float>>) {
-    Matrix<P> m(this->rows_, this->cols_);
+template <typename T> template <typename P> Matrix<T>::operator P() {
+  if constexpr (std::is_arithmetic_v<typename P::element_type>) {
+    std::vector<std::vector<typename P::element_type>> arr;
     for (uint64_t i = 0; i < this->rows_; i++) {
+      std::vector<typename P::element_type> temp;
       for (uint64_t j = 0; j < this->cols_; j++) {
-        m.arr_[i][j] = static_cast<P>(this->arr_[i][j]);
+        temp.push_back(typename P::element_type(this->arr_[i][j]));
       }
+      arr.push_back(temp);
     }
+    Matrix<typename P::element_type> m(this->rows_, this->cols_);
+    m.setArr(arr);
     return m;
   }
-  throw std::invalid_argument("Not a valid type conversions\n");
+  throw std::invalid_argument("no defined type conversion\n");
 }
+
 } // namespace LinAlg
