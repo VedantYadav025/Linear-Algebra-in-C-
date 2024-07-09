@@ -4,6 +4,7 @@
 #include <iostream>
 #include <istream>
 #include <ostream>
+#include <random>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
@@ -36,8 +37,10 @@ public:
   Matrix transpose() const;
   T trace() const;
   double frobNorm() const;
-  // type conversions
-  template <typename P> operator P();
+  Matrix<double> inv() const;
+  template <typename P> operator P(); // type conversion using static_cast
+  friend Matrix<double> randn(const std::pair<uint64_t, uint64_t> &shape,
+                              const double &mean, const double &var);
 
 private:
   uint64_t rows_, cols_;
@@ -63,6 +66,10 @@ template <typename T>
 void Matrix<T>::setArr(const std::vector<std::vector<T>> &arr) {
   this->arr_ = arr;
   return;
+}
+
+template <typename T> std::vector<std::vector<T>> Matrix<T>::getArr() const {
+  return this->arr_;
 }
 
 template <typename T> Matrix<T> Matrix<T>::operator+(const Matrix &M) const {
@@ -250,6 +257,24 @@ template <typename T> template <typename P> Matrix<T>::operator P() {
     return m;
   }
   throw std::invalid_argument("no defined type conversion\n");
+}
+
+template <typename T>
+Matrix<double> randn(const std::pair<uint64_t, uint64_t> &shape,
+                     const double &mean, const double &var) {
+  std::random_device rd;  // seed generator
+  std::mt19937 gen(rd()); // Mersenne Twister engine
+  std::normal_distribution<> d(mean, std::sqrt(var));
+  std::vector<std::vector<double>> arr(shape.first,
+                                       std::vector<double>(shape.second));
+  for (uint64_t i = 0; i < shape.first; i++) {
+    for (uint64_t j = 0; j < shape.second; j++) {
+      arr[i][j] = d(gen);
+    }
+  }
+  Matrix<double> random_matrix(shape.first, shape.second);
+  random_matrix.setArr(arr);
+  return random_matrix;
 }
 
 } // namespace LinAlg
