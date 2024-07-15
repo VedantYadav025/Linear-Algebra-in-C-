@@ -3,10 +3,14 @@
 #include "Matrix.h"
 #include <iostream>
 
+/*
+Matrix<double> M(2,2) = LinAlg::randn({2,2}, mean);
+*/
+
 int main() {
-  LinAlg::Matrix<int> M(3, 3);
-  std::cin >> M;
-  std::cout << M.transpose() << "\n";
+  LinAlg::Matrix<int> M(2, 2);
+  M = {{1, 2}, {3, 4}};
+  std::cout << M << "n";
   return 0;
 }
 

@@ -2,6 +2,7 @@
 #include <istream>
 #include <ostream>
 #include <utility>
+// how to check if a variable is not complex
 template <typename T> class complex {
 public:
   complex();
@@ -17,9 +18,13 @@ public:
   complex operator*(const complex &c) const;
   complex operator=(const std::pair<T, T> &c);
   bool operator==(const complex &c) const;
+  friend complex<double>
+  randn(const double &mean,
+        const double &var); // returns a complex number drawn from a gaussian
 
 private:
   T real_, img_;
+  complex<double> inverse() const;
 };
 
 template <typename T> complex<T>::complex() : real_(0), img_(0) { ; }
@@ -86,4 +91,10 @@ complex<T> complex<T>::operator=(const std::pair<T, T> &c) {
 
 template <typename T> bool complex<T>::operator==(const complex<T> &c) const {
   return (this->real_ == c.real_ && this->img_ == c.img_);
+}
+template <typename T> complex<double> complex<T>::inverse() const {
+  double mod = this->mod();
+  double inverse_mod = 1 / mod;
+  complex<double> inverse(this->real_ / mod, -this->img_ / mod);
+  return inverse;
 }
