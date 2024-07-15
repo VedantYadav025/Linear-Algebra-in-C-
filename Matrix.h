@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -41,6 +42,9 @@ public:
   template <typename P> operator P(); // type conversion using static_cast
   friend Matrix<double> randn(const std::pair<uint64_t, uint64_t> &shape,
                               const double &mean, const double &var);
+  Matrix<double> rref() const;
+  std::pair<Matrix<double>, Matrix<double>> lu() const;
+  bool isOrthogonal() const; // checks if the matrix is orthogonal
 
 private:
   uint64_t rows_, cols_;
@@ -112,7 +116,7 @@ std::ostream &operator<<(std::ostream &output, const Matrix<T> &M) {
     for (uint64_t j = 0; j < M.cols_; j++) {
       output << M.arr_[i][j] << " ";
     }
-    std::cout << "\n";
+    output << "\n";
   }
   return output;
 }
@@ -131,7 +135,7 @@ template <typename T> Matrix<T> Matrix<T>::scalarmul(const T &scalar) const {
   Matrix<T> M(this->rows_, this->cols_);
   for (uint64_t i = 0; i < this->rows_; i++) {
     for (uint64_t j = 0; j < this->cols_; j++) {
-      this->arr_[i][j] = this->arr_[i][j] * scalar;
+      M.arr_[i][j] = this->arr_[i][j] * scalar;
     }
   }
   return M;
