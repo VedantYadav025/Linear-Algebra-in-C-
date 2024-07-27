@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 
-
 namespace LinAlg {
 template <typename T> class Matrix {
 public:

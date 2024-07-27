@@ -9,8 +9,6 @@ Matrix<double> M(2,2) = LinAlg::randn({2,2}, mean);
 
 int main() {
   LinAlg::Matrix<int> M(2, 2);
-  M = {{1, 2}, {3, 4}};
-  std::cout << M << "n";
   return 0;
 }
 

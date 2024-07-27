@@ -2,6 +2,7 @@
 #include <istream>
 #include <ostream>
 #include <utility>
+#include <vector>
 // how to check if a variable is not complex
 template <typename T> class complex {
 public:
