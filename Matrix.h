@@ -281,4 +281,32 @@ Matrix<double> randn(const std::pair<uint64_t, uint64_t> &shape,
   return random_matrix;
 }
 
+template <typename T> bool Matrix<T>::isOrthogonal() const {
+  Matrix<T> mat = this->matmul(this->transpose());
+  // std::cout << mat << "\n";
+  double tolerance = static_cast<double>(1e-5);
+  if (this->rows_ != this->cols_)
+    throw std::invalid_argument("Only square matrices can be orthogonal\n");
+  for (uint64_t i = 0; i < this->rows_; i++) {
+    for (uint64_t j = 0; j < this->cols_; j++) {
+      if (i == j) {
+        if (std::abs(mat.arr_[i][j] - static_cast<T>(1)) > tolerance) {
+          /*
+          std::cout << i << "\n";
+          std::cout << std::abs(mat.arr_[i][j] - static_cast<T>(1)) << "\n";
+          std::cout << "here1\n";
+          return false;
+          */
+        }
+      } else {
+        if (std::abs(mat.arr_[i][j]) > tolerance) {
+          std::cout << "here2\n";
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 } // namespace LinAlg
