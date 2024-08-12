@@ -295,8 +295,8 @@ template <typename T> bool Matrix<T>::isOrthogonal() const {
           std::cout << i << "\n";
           std::cout << std::abs(mat.arr_[i][j] - static_cast<T>(1)) << "\n";
           std::cout << "here1\n";
-          return false;
           */
+          return false;
         }
       } else {
         if (std::abs(mat.arr_[i][j]) > tolerance) {
