@@ -264,8 +264,9 @@ template <typename T> template <typename P> Matrix<T>::operator P() {
 }
 
 template <typename T>
-Matrix<double> randn(const std::pair<std::size_t, std::size_t> &shape,
+Matrix<T> randn(const std::pair<std::size_t, std::size_t> &shape,
                      const double &mean, const double &var) {
+                      // Now, I don't think this should be a member function
   std::random_device rd;  // seed generator
   std::mt19937 gen(rd()); // Mersenne Twister engine
   std::normal_distribution<> d(mean, std::sqrt(var));
