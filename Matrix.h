@@ -40,8 +40,6 @@ public:
   double frobNorm() const;
   Matrix<double> inv() const;
   template <typename P> operator P(); // type conversion using static_cast
-  friend Matrix<double> randn(const std::pair<std::size_t, std::size_t> &shape,
-                              const double &mean, const double &var);
   Matrix<double> rref() const;
   std::pair<Matrix<double>, Matrix<double>> lu() const;
   bool isOrthogonal() const; // checks if the matrix is orthogonal
@@ -263,25 +261,6 @@ template <typename T> template <typename P> Matrix<T>::operator P() {
   throw std::invalid_argument("no defined type conversion\n");
 }
 
-template <typename T>
-Matrix<T> randn(const std::pair<std::size_t, std::size_t> &shape,
-                     const double &mean, const double &var) {
-                      // Now, I don't think this should be a member function
-  std::random_device rd;  // seed generator
-  std::mt19937 gen(rd()); // Mersenne Twister engine
-  std::normal_distribution<> d(mean, std::sqrt(var));
-  std::vector<std::vector<double>> arr(shape.first,
-                                       std::vector<double>(shape.second));
-  for (std::size_t i = 0; i < shape.first; i++) {
-    for (std::size_t j = 0; j < shape.second; j++) {
-      arr[i][j] = d(gen);
-    }
-  }
-  Matrix<double> random_matrix(shape.first, shape.second);
-  random_matrix.setArr(arr);
-  return random_matrix;
-}
-
 template <typename T> bool Matrix<T>::isOrthogonal() const {
   Matrix<T> mat = this->matmul(this->transpose());
   // std::cout << mat << "\n";
@@ -308,6 +287,25 @@ template <typename T> bool Matrix<T>::isOrthogonal() const {
     }
   }
   return true;
+}
+
+template <typename T>
+Matrix<T> randn(const std::size_t &rows, const std::size_t &cols,
+                const double &mean, const double &var) {
+  std::random_device rd;  // seed generator
+  std::mt19937 gen(rd()); // Mersenne Twister engine
+  std::normal_distribution<> d(mean, std::sqrt(var));
+  std::vector<std::vector<T>> arr(rows, std::vector<T>(cols));
+
+  for (std::size_t i = 0; i < rows; i++) {
+    for (std::size_t j = 0; j < cols; j++) {
+      arr[i][j] = d(gen);
+    }
+  }
+
+  Matrix<T> random_matrix(rows, cols);
+  random_matrix.setArr(arr);
+  return random_matrix;
 }
 
 } // namespace LinAlg
