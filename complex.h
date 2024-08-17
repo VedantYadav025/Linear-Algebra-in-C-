@@ -99,3 +99,4 @@ template <typename T> complex<double> complex<T>::inverse() const {
   complex<double> inverse(this->real_ / mod, -this->img_ / mod);
   return inverse;
 }
+
