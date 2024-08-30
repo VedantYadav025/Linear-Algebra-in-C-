@@ -307,5 +307,4 @@ Matrix<T> randn(const std::size_t &rows, const std::size_t &cols,
   random_matrix.setArr(arr);
   return random_matrix;
 }
-
 } // namespace LinAlg
