@@ -1,4 +1,4 @@
-# I am building a Matrix Algebra library for C++
+# Matrix Algebra library for C++
 
 ## This is like MATLAB in C++
 
