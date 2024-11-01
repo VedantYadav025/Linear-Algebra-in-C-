@@ -12,13 +12,14 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace LinAlg {
 template <typename T> class Matrix {
 public:
-  using element_type = T;
   Matrix();
   Matrix(const std::size_t &rows, const std::size_t &cols);
+  Matrix(const std::vector<std::vector<T>> arr);
   void setArr(const std::vector<std::vector<T>> &arr);
   std::vector<std::vector<T>> getArr() const;
   Matrix operator+(const Matrix &M) const;
@@ -31,16 +32,16 @@ public:
   friend std::istream &operator>>(std::istream &input, Matrix<P> &M);
   std::pair<T, T> shape() const;
   Matrix matmul(const Matrix<T> &M) const;
-  Matrix scalarmul(const  T &scalar) const;
+  Matrix scalarmul(const T &scalar) const;
   Matrix subMatrix(const std::size_t &row_to_be_deleted,
                    const std::size_t &col_to_be_deleted) const;
   T determinant(const std::string &algorithm) const;
   Matrix transpose() const;
   T trace() const;
   double frobNorm() const;
-  Matrix<double> inverse() const;         // calulates inverse of the matrix
+  Matrix<double> inverse() const;     // calulates inverse of the matrix
   template <typename P> operator P(); // type conversion using static_cast
-  Matrix<double> rref() const; // Reduced Row Echelon Form
+  Matrix<double> rref() const;        // Reduced Row Echelon Form
   std::pair<Matrix<double>, Matrix<double>> lu() const;
   bool isOrthogonal() const; // checks if the matrix is orthogonal
   std::vector<Matrix<T>>
@@ -48,6 +49,7 @@ public:
 
 private:
   std::size_t rows_, cols_;
+  using element_type = T;
   std::vector<std::vector<T>> arr_;
   T determinantLaplace() const;
 };
@@ -74,6 +76,12 @@ void Matrix<T>::setArr(const std::vector<std::vector<T>> &arr) {
 
 template <typename T> std::vector<std::vector<T>> Matrix<T>::getArr() const {
   return this->arr_;
+}
+
+template<typename T> Matrix<T>::Matrix(const std::vector<std::vector<T>> arr) {
+  this->arr_ = arr;
+  this->rows_ = arr.size();
+  this->cols_ = arr[0].size();
 }
 
 template <typename T> Matrix<T> Matrix<T>::operator+(const Matrix &M) const {
@@ -310,8 +318,9 @@ Matrix<T> randn(const std::size_t &rows, const std::size_t &cols,
   return random_matrix;
 }
 
-template <typename T> std::vector<Matrix<T>> Matrix<T>::svd() const {
-  std::vector<Matrix<T>> svd_vector;
-  return svd_vector;
+template <typename T> 
+std::vector<Matrix<T>> Matrix<T>::svd() const {
+  std::vector<Matrix<T>> ans(3);
+  Matrix<T> q, s;
 }
 } // namespace LinAlg
